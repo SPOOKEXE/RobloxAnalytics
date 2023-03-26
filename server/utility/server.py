@@ -150,7 +150,7 @@ class ServerThreadWrapper:
 	def __init__(self, webserver=None, server_closed_callback=None):
 		self.start(webserver=webserver, server_closed_callback=server_closed_callback)
 
-def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsync=None) -> Thread:
+def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsync=None) -> ServerThreadWrapper:
 	customThreadedResponder = ThreadedServerResponder
 	customThreadedResponder.onGET = onGET
 	customThreadedResponder.onGETAsync = onGETAsync
