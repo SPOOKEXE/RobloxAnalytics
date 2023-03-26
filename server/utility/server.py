@@ -21,6 +21,7 @@ class ThreadedServerResponder(BaseHTTPRequestHandler):
 	onGETAsync = None
 	onPOST = None
 	onPOSTAsync = None
+	onServerExit = None
 
 	# Write strings to the request wfile (output to client)
 	def _write_wfile(self, message : str) -> None:
@@ -150,17 +151,20 @@ class ServerThreadWrapper:
 	def __init__(self, webserver=None, server_closed_callback=None):
 		self.start(webserver=webserver, server_closed_callback=server_closed_callback)
 
-def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsync=None) -> ServerThreadWrapper:
+def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsync=None, onServerExit=None) -> ServerThreadWrapper:
 	customThreadedResponder = ThreadedServerResponder
 	customThreadedResponder.onGET = onGET
 	customThreadedResponder.onGETAsync = onGETAsync
 	customThreadedResponder.onPOST = onPOST
 	customThreadedResponder.onPOSTAsync = onPOSTAsync
+	customThreadedResponder.onServerExit = onServerExit
 
 	webServer = HTTPServer((HOST_IP, port), customThreadedResponder)
 
 	def ThreadExitCallback():
 		print("Server Closed")
+		if webServer.onServerExit != None:
+			webServer.onServerExit()
 		webServer.server_close()
 
 	return ServerThreadWrapper(webserver=webServer, server_closed_callback=ThreadExitCallback)
