@@ -1,11 +1,11 @@
 {
-	"name": "ubuntu-roblox-server",
+	"name": "roblox-analytics-server",
 	"tree": {
 		"$className": "DataModel",
 		"ServerStorage": {
 			"$className": "ServerStorage",
 			"$ignoreUnknownInstances": true,
-			"AnalyticService":{
+			"Roblo-Lytics":{
 				"$path": "roblox"
 			}
 		}
