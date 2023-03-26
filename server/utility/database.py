@@ -2,13 +2,19 @@ from zlib import compress, decompress
 from json import loads as json_loads, dumps as json_dumps
 from os import path, makedirs
 from typing import Any, Union
-from time import time
+from shutil import rmtree
+
 
 PY_FILE_DIRECTORY = path.dirname(path.realpath(__file__))
 VALID_DATABASE_TYPES = Union[dict, list, str, int]
 
 class DatabaseCore:
 	filepath = None
+
+	def delete(self) -> None:
+		dirpath, _ = path.split(self.filepath)
+		if path.exists(dirpath):
+			rmtree( dirpath )
 
 	def _write_blank_database(self) -> None:
 		try:
@@ -101,41 +107,6 @@ class RobloxAnalytics(DatabaseCore):
 			datastore[unique_key] = data
 		self._write_database(database)
 
-	def __init__( self, place_id=-1 ):
-		filepath = path.join( PY_FILE_DIRECTORY, str(place_id), "data.dat" )
+	def __init__( self, id="-1" ):
+		filepath = path.join( PY_FILE_DIRECTORY, str(id), "data.dat" )
 		super().__init__(filepath=filepath)
-
-if __name__ == '__main__':
-
-	from random import randint
-	
-	TEST_PLACE_ID = 35035425
-	TEST_DATASTORE_NAME = "PlayerAnalytics1"
-
-	## SAMPLE SINGLE VALUE ##
-	sample_unique_key = "1"
-	sample_data = { "Currency" : randint(1, 1e6), "Inventory" : [{"ID" : "1", "Quantity" : 1, "UUID" : "123123-123123-123123-123123"}] }
-	
-	simple_database = RobloxAnalytics(place_id=TEST_PLACE_ID)
-	simple_database.SetValue(TEST_DATASTORE_NAME, sample_unique_key, sample_data)
-	stored_value = simple_database.GetValue(TEST_DATASTORE_NAME, sample_unique_key)
-	simple_database._dump_decompressed( path.join(PY_FILE_DIRECTORY, str(TEST_PLACE_ID), "decompressed.json") )
-	print(stored_value == sample_data and "Successfully saved and loaded the same data" or "Failed to save and load the same data.")
-	
-	## SAMPLE BULK VALUE ##
-	def GetRandomInventoryData() -> dict:
-		inventory = { }
-		ids = [ "ItemID_" + str( randint(1e3, 1e6) ) for _ in range(100) ]
-		for _id in ids:
-			inventory[_id] = { }
-			uids = [ "UUID_" + str( randint(1e3, 1e6) ) for _ in range(20) ]
-			for _uid in uids:
-				inventory[_id][_uid] = { "Quantity" : randint(1, 100) }
-		return inventory
-
-	sample_user_ids = [ randint(1, 1e6) for _ in range(1000) ]
-	sample_user_datas = [ {"Currency" : randint(1, 1e6), "Inventory" : GetRandomInventoryData()} for _ in range( len(sample_user_ids) ) ]
-
-	bulk_database = RobloxAnalytics(place_id=TEST_PLACE_ID + 1)
-	bulk_database.SetBulkValue(TEST_DATASTORE_NAME, sample_user_ids, sample_user_datas)
-	bulk_database._dump_decompressed( path.join(PY_FILE_DIRECTORY, str(TEST_PLACE_ID+1), "bulk.json") )
