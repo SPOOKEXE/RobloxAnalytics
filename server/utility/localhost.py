@@ -127,7 +127,7 @@ class ServerThreadWrapper:
 
 	def join_thread_callback(self, thread : Thread, callback):
 		thread.join()
-		callback()
+		callback(self)
 
 	def thread_ended_callback(self, main_thread : Thread, callback) -> Thread:
 		callback_thread = Thread(target=self.join_thread_callback, args=(main_thread, callback))
@@ -153,6 +153,7 @@ class ServerThreadWrapper:
 
 def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsync=None, onServerExit=None) -> ServerThreadWrapper:
 	customThreadedResponder = ThreadedServerResponder
+	customThreadedResponder.webserver = None
 	customThreadedResponder.onGET = onGET
 	customThreadedResponder.onGETAsync = onGETAsync
 	customThreadedResponder.onPOST = onPOST
@@ -161,10 +162,11 @@ def SetupLocalHost(port=500, onGET=None, onPOST=None, onGETAsync=None, onPOSTAsy
 
 	webServer = HTTPServer((HOST_IP, port), customThreadedResponder)
 
-	def ThreadExitCallback():
+	def ThreadExitCallback(self):
 		print("Server Closed")
-		if webServer.onServerExit != None:
-			webServer.onServerExit()
+		nonlocal webServer
+		if webServer.RequestHandlerClass.onServerExit != None:
+			webServer.RequestHandlerClass.onServerExit()
 		webServer.server_close()
 
 	return ServerThreadWrapper(webserver=webServer, server_closed_callback=ThreadExitCallback)

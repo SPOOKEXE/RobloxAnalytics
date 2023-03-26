@@ -14,7 +14,10 @@ class DatabaseCore:
 	def delete(self) -> None:
 		dirpath, _ = path.split(self.filepath)
 		if path.exists(dirpath):
-			rmtree( dirpath )
+			try:
+				rmtree( dirpath )
+			except Exception as e:
+				print("Unable to delete folder: ", path.basename(dirpath))
 
 	def _write_blank_database(self) -> None:
 		try:

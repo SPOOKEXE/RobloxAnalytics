@@ -10,6 +10,8 @@ sys_path.append( os_path.join(directory, "..", "..", "..") )
 
 from server.utility.database import RobloxAnalytics
 
+sys_path.pop()
+
 def run_light_test() -> list[ (bool, str) ]:
 	print("light test - start")
 	TEST_RESULTS = []
@@ -25,8 +27,8 @@ def run_light_test() -> list[ (bool, str) ]:
 
 	# save and load
 	print("light test - hash comparison")
-	saving_hash = md5( json_dumps(sample_data).encode() )
-	loaded_hash = md5( json_dumps(stored_value).encode() )
+	saving_hash = md5(json_dumps(sample_data).encode()).hexdigest()
+	loaded_hash = md5(json_dumps(stored_value).encode()).hexdigest()
 	if saving_hash == loaded_hash:
 		TEST_RESULTS.append((True, "Sample data was able to be saved and loaded. Hash Value: " + saving_hash))
 	else:

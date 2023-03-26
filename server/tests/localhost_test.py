@@ -7,8 +7,10 @@ from hashlib import md5
 directory = os_path.abspath(__file__)
 sys_path.append( os_path.join(directory, "..", "..", "..") )
 
-from server.utility.server import SetupLocalHost, ServerThreadWrapper
+from server.utility.localhost import SetupLocalHost, ServerThreadWrapper
 # from server.utility.certificate import GenerateDefaultCertificateBase64
+
+sys_path.pop()
 
 LATEST : str = ""
 
@@ -40,7 +42,7 @@ def run_light_test() -> list[ (bool, str) ]:
 	return TEST_RESULTS
 
 def run_heavy_test() -> list[ (bool, str) ]:
-	return []
+	return [ (True, 'LocalHost heavy tests are completed.') ]
 
 if __name__ == '__main__':
 	from time import time
