@@ -74,12 +74,14 @@ if __name__ == '__main__':
 	
 	s0 = time()
 	LIGHT_TEST_RESULTS = run_light_test()
-	(print( x ) for x in LIGHT_TEST_RESULTS)
+	for x in LIGHT_TEST_RESULTS:
+		print(x)
 	dur1 = time() - s0
 	print( "Light Test Duration; ", round(dur1, 2) )
 
 	s1 = time()
 	HEAVY_TEST_RESULTS = run_heavy_test()
-	(print( x ) for x in HEAVY_TEST_RESULTS)
+	for x in LIGHT_TEST_RESULTS:
+		print(x)
 	dur2 = time() - s1
 	print( "Heavy Test Duration;", round(dur2, 2) )

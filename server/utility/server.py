@@ -89,7 +89,7 @@ class ThreadedServerResponder(BaseHTTPRequestHandler):
 
 	def do_REQUEST(self, callback, callback_async) -> None:
 		valid_request, content, content_length = self._get_request_essentials()
-		print(valid_request, content_length)
+		# print(valid_request, content_length)
 		if not valid_request:
 			return
 

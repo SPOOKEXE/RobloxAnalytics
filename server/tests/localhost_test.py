@@ -8,14 +8,14 @@ directory = os_path.abspath(__file__)
 sys_path.append( os_path.join(directory, "..", "..", "..") )
 
 from server.utility.server import SetupLocalHost, ServerThreadWrapper
-from server.utility.certificate import GenerateDefaultCertificateBase64
+# from server.utility.certificate import GenerateDefaultCertificateBase64
+
+LATEST : str = ""
 
 def run_light_test() -> list[ (bool, str) ]:
 	TEST_RESULTS = []
-	LATEST : str = ""
-
+	
 	def CallbackExample(self, content_length : int, content : str) -> int:
-		print((content_length, content))
 		global LATEST
 		LATEST = content
 		return 200
@@ -24,20 +24,19 @@ def run_light_test() -> list[ (bool, str) ]:
 
 	sample_data_1 = json_dumps({"test" : 1})
 	requests_get("http://localhost:9999", data=sample_data_1)
-	if md5(sample_data_1.encode()) == md5(LATEST.encode()):
+	if sample_data_1 == LATEST:
 		TEST_RESULTS.append((True, "GET data has successfully been sent over localhost."))
 	else:
 		TEST_RESULTS.append((False, "GET data has unsuccessfully been sent over localhost."))
 
 	sample_data_2 = json_dumps({"test" : 2})
 	requests_post("http://localhost:9999", data=sample_data_2)
-	if md5(sample_data_2.encode()) == md5(LATEST.encode()):
+	if sample_data_2 == LATEST:
 		TEST_RESULTS.append((True, "POST data has successfully been sent over localhost."))
 	else:
 		TEST_RESULTS.append((False, "POST data has unsuccessfully been sent over localhost."))
 
 	host.shutdown()
-
 	return TEST_RESULTS
 
 def run_heavy_test() -> list[ (bool, str) ]:
@@ -48,12 +47,14 @@ if __name__ == '__main__':
 	
 	s0 = time()
 	LIGHT_TEST_RESULTS = run_light_test()
-	(print( x ) for x in LIGHT_TEST_RESULTS)
+	for x in LIGHT_TEST_RESULTS:
+		print(x)
 	dur1 = time() - s0
 	print( "Light Test Duration; ", round(dur1, 2) )
 
 	s1 = time()
 	HEAVY_TEST_RESULTS = run_heavy_test()
-	(print( x ) for x in HEAVY_TEST_RESULTS)
+	for x in HEAVY_TEST_RESULTS:
+		print(x)
 	dur2 = time() - s1
 	print( "Heavy Test Duration;", round(dur2, 2) )
