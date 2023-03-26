@@ -1,0 +1,13 @@
+{
+	"name": "ubuntu-roblox-server",
+	"tree": {
+		"$className": "DataModel",
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"$ignoreUnknownInstances": true,
+			"AnalyticService":{
+				"$path": "roblox"
+			}
+		}
+	}
+}
